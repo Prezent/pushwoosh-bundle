@@ -1,0 +1,34 @@
+{
+  "name": "prezent/pushwoosh-bundle",
+  "type": "symfony-bundle",
+  "description": "Integrates the gomoob/php-pushwoosh library into a Symfony2 application",
+  "keywords": ["pushwoosh", "push", "mobile", "bundle"],
+  "homepage": "http://www.prezent.nl",
+  "require": {
+    "php": "~5.5",
+    "gomoob/php-pushwoosh": "^1.1",
+    "symfony/framework-bundle": "~2.3"
+  },
+  "suggest": {
+    "doctrine/orm": "To use a database to store the push receivers in"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Robert-Jan Bijl",
+      "email": "robert-jan@prezent.nl"
+    },
+    {
+      "name": "Prezent Internet B.V.",
+      "email": "github@prezent.nl"
+    }
+  ],
+  "autoload": {
+    "psr-4": { "Prezent\\PushwooshBundle\\": "" }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "0.x-dev"
+    }
+  }
+}

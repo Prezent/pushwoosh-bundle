@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="prezent_pushwoosh.application_id"></parameter>
+        <parameter key="prezent_pushwoosh.api_key"></parameter>
+    </parameters>
+    
+    <services>
+
+        <service id="pushwoosh" class="Gomoob\Pushwoosh\Client\Pushwoosh">
+            <factory class="Gomoob\Pushwoosh\Client\Pushwoosh" method="create" />
+            <call method="setApplication">
+                <argument>%prezent_pushwoosh.application_id%</argument>
+            </call>
+            <call method="setAuth">
+                <argument>%prezent_pushwoosh.api_key%</argument>
+            </call>
+        </service>
+
+    </services>
+
+</container>
