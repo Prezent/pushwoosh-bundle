@@ -3,15 +3,14 @@
 namespace Prezent\PushwooshBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gomoob\Pushwoosh\Model\Notification\Platform;
 
 /**
  * Prezent\PushwooshBundle\Entity\PushReceiver
  *
  * @author Robert-Jan Bijl <robert-jan@prezent.nl>
 
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks
- * @ORM\Table(name="push_receiver")
+ * @ORM\MappedSuperclass
  */
 class PushReceiver
 {
@@ -25,7 +24,7 @@ class PushReceiver
 
     /**
      * @var string
-     * @ORM\Column(name="push_token", type="string")
+     * @ORM\Column(name="push_token", type="string", unique=true)
      */
     private $pushToken;
 
@@ -37,7 +36,7 @@ class PushReceiver
 
     /**
      * @var string
-     * @ORM\Column(name="identifier", type="string")
+     * @ORM\Column(name="identifier", type="string", unique=true)
      */
     private $identifier;
 
@@ -49,50 +48,9 @@ class PushReceiver
 
     /**
      * @var int
-     * @ORM\Column(name="timezone", type="integer")
+     * @ORM\Column(name="timezone", type="integer", nullable=true)
      */
     private $timezone;
-
-    /**
-     * @var boolean
-     * @ORM\Column(name="active", type="boolean")
-     */
-    private $active;
-
-    /**
-     * @var array
-     * @ORM\Column(name="data", type="array", nullable=true)
-     */
-    private $data;
-
-    /**
-     * @var \DateTime
-     * @ORM\Column(name="created", type="datetime")
-     */
-    private $created;
-
-    /**
-     * @var \DateTime
-     * @ORM\Column(name="updated", type="datetime", nullable=true)
-     */
-    private $updated;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->created = new \DateTime();
-        $this->data = [];
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updated = new \DateTime();
-    }
 
     /**
      * Getter for id
@@ -129,22 +87,52 @@ class PushReceiver
     /**
      * Getter for deviceType
      *
-     * @return string
+     * @return Platform
      */
     public function getDeviceType()
     {
-        return $this->deviceType;
+        switch ($this->deviceType) {
+            case 1:
+                return Platform::iOS();
+                break;
+            case 2:
+                return Platform::blackBerry();
+                break;
+            case 3:
+                return Platform::android();
+                break;
+            case 4:
+                return Platform::nokia();
+                break;
+            case 5:
+                return Platform::windowsPhone7();
+                break;
+            case 7:
+                return Platform::macOSX();
+                break;
+            case 8:
+                return Platform::windows8();
+                break;
+            case 9:
+                return Platform::amazon();
+                break;
+            case 10:
+                return Platform::safari();
+                break;
+        }
+
+        throw new \RuntimeException('Not a valid device type set');
     }
 
     /**
      * Setter for deviceType
      *
-     * @param string $deviceType
+     * @param Platform $deviceType
      * @return self
      */
-    public function setDeviceType($deviceType)
+    public function setDeviceType(Platform $deviceType)
     {
-        $this->deviceType = $deviceType;
+        $this->deviceType = $deviceType->getValue();
         return $this;
     }
 
@@ -211,95 +199,6 @@ class PushReceiver
     public function setTimezone($timezone)
     {
         $this->timezone = $timezone;
-        return $this;
-    }
-
-    /**
-     * Getter for active
-     *
-     * @return boolean
-     */
-    public function isActive()
-    {
-        return $this->active;
-    }
-
-    /**
-     * Setter for active
-     *
-     * @param boolean $active
-     * @return self
-     */
-    public function setActive($active)
-    {
-        $this->active = $active;
-        return $this;
-    }
-
-    /**
-     * Getter for data
-     *
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * Setter for data
-     *
-     * @param array $data
-     * @return self
-     */
-    public function setData(array $data)
-    {
-        $this->data = $data;
-        return $this;
-    }
-
-    /**
-     * Add a new data value
-     *
-     * @param string $key
-     * @param string $value
-     * @return self
-     */
-    public function addData($key, $value)
-    {
-        $this->data[$key] = $value;
-        return $this;
-    }
-
-    /**
-     * Getter for created
-     *
-     * @return \DateTime
-     */
-    public function getCreated()
-    {
-        return $this->created;
-    }
-
-    /**
-     * Getter for updated
-     *
-     * @return \DateTime
-     */
-    public function getUpdated()
-    {
-        return $this->updated;
-    }
-
-    /**
-     * Setter for updated
-     *
-     * @param \DateTime $updated
-     * @return self
-     */
-    public function setUpdated(\DateTime $updated)
-    {
-        $this->updated = $updated;
         return $this;
     }
 }
