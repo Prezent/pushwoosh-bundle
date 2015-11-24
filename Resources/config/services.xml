@@ -5,8 +5,9 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="prezent_pushwoosh.application_id"></parameter>
-        <parameter key="prezent_pushwoosh.api_key"></parameter>
+        <parameter key="prezent_pushwoosh.application_id">null</parameter>
+        <parameter key="prezent_pushwoosh.application_group_id">null</parameter>
+        <parameter key="prezent_pushwoosh.api_key">null</parameter>
         <parameter key="prezent_pushwoosh.pushwoosh_client_class">Gomoob\Pushwoosh\Client\Pushwoosh</parameter>
     </parameters>
     
@@ -15,6 +16,9 @@
         <service id="pushwoosh" class="%prezent_pushwoosh.pushwoosh_client_class%">
             <call method="setApplication">
                 <argument>%prezent_pushwoosh.application_id%</argument>
+            </call>
+            <call method="setApplicationsGroup">
+                <argument>%prezent_pushwoosh.application_group_id%</argument>
             </call>
             <call method="setAuth">
                 <argument>%prezent_pushwoosh.api_key%</argument>

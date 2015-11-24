@@ -23,14 +23,12 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-            ->scalarNode('application_id')
-                ->isRequired()
-            ->end()
             ->scalarNode('api_key')
                 ->isRequired()
             ->end()
-            ->scalarNode('client_class')
-            ->end()
+            ->scalarNode('application_id')->end()
+            ->scalarNode('application_group_id')->end()
+            ->scalarNode('client_class')->end()
         ;
 
         return $treeBuilder;
