@@ -9,6 +9,9 @@
     "gomoob/php-pushwoosh": "^1.1",
     "symfony/framework-bundle": "~2.3"
   },
+  "require-dev": {
+    "phpunit/phpunit": "@stable"
+  },
   "suggest": {
     "doctrine/orm": "To use a database to store the push receivers in"
   },
