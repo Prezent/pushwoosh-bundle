@@ -6,7 +6,7 @@ Integrates [gomoob/php-pushwoosh](https://github.com/gomoob/php-pushwoosh) into 
 This bundle can be installed using Composer. Tell composer to install the extension:
 
 ```bash
-$ php composer.phar require gomoob/php-pushwoosh
+$ php composer.phar require prezent/pushwoosh-bundle
 ```
 
 Then, activate the bundle in your kernel:
