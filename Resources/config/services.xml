@@ -7,12 +7,12 @@
     <parameters>
         <parameter key="prezent_pushwoosh.application_id"></parameter>
         <parameter key="prezent_pushwoosh.api_key"></parameter>
+        <parameter key="prezent_pushwoosh.pushwoosh_client_class">Gomoob\Pushwoosh\Client\Pushwoosh</parameter>
     </parameters>
     
     <services>
 
-        <service id="pushwoosh" class="Gomoob\Pushwoosh\Client\Pushwoosh">
-            <factory class="Gomoob\Pushwoosh\Client\Pushwoosh" method="create" />
+        <service id="pushwoosh" class="%prezent_pushwoosh.pushwoosh_client_class%">
             <call method="setApplication">
                 <argument>%prezent_pushwoosh.application_id%</argument>
             </call>

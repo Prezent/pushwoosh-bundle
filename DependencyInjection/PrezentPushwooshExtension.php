@@ -28,5 +28,10 @@ class PrezentPushwooshExtension extends Extension
 
         $container->setParameter('prezent_pushwoosh.application_id', $config['application_id']);
         $container->setParameter('prezent_pushwoosh.api_key', $config['api_key']);
+
+        // overwrite the client class, if one is specified in the config
+        if (isset($config['client_class'])) {
+            $container->setParameter('prezent_pushwoosh.pushwoosh_client_class', $config['client_class']);
+        }
     }
 }
