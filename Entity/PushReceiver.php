@@ -24,7 +24,7 @@ class PushReceiver
 
     /**
      * @var string
-     * @ORM\Column(name="push_token", type="string", unique=true)
+     * @ORM\Column(name="push_token", type="string")
      */
     private $pushToken;
 
@@ -36,7 +36,7 @@ class PushReceiver
 
     /**
      * @var string
-     * @ORM\Column(name="identifier", type="string", unique=true)
+     * @ORM\Column(name="identifier", type="string")
      */
     private $identifier;
 
