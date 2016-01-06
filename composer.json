@@ -5,7 +5,7 @@
   "keywords": ["pushwoosh", "push", "mobile", "bundle"],
   "homepage": "http://www.prezent.nl",
   "require": {
-    "php": "~5.5",
+    "php": ">=5.5.9",
     "gomoob/php-pushwoosh": "^1.1",
     "symfony/framework-bundle": "~2.3|~3.0"
   },
