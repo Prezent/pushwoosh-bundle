@@ -25,6 +25,10 @@
             </call>
         </service>
 
+        <service id="prezent_pushwoosh.pushwoosh_manager" class="Prezent\PushwooshBundle\Manager\PushwooshManager">
+            <argument type="service" id="pushwoosh"/>
+        </service>
+
     </services>
 
 </container>

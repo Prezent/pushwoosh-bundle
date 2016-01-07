@@ -2,9 +2,7 @@
 
 namespace Prezent\PushwooshBundle\Command;
 
-use Gomoob\Pushwoosh\IPushwoosh;
-use Gomoob\Pushwoosh\Model\Notification\Notification;
-use Gomoob\Pushwoosh\Model\Request\CreateMessageRequest;
+use Prezent\PushwooshBundle\Manager\PushwooshManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,7 +23,7 @@ class SendPushCommand extends ContainerAwareCommand
     {
         $this
             ->setName('push:send')
-            ->setDescription('Send a push message')
+            ->setDescription('Send a push message manually')
             ->addArgument('message', InputArgument::REQUIRED, 'The message to send')
             ->addOption(
                 'tokens',
@@ -34,7 +32,7 @@ class SendPushCommand extends ContainerAwareCommand
                 'List of push token to send the notification to',
                 []
             )
-            ->setHelp('Send a push message')
+            ->setHelp('Send a push message manually')
         ;
     }
 
@@ -43,49 +41,24 @@ class SendPushCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var IPushwoosh $pushwoosh */
-        $pushwoosh = $this->getContainer()->get('pushwoosh');
-        $request = $this->createRequest($input->getArgument('message'), $input->getOption('tokens'));
-
-        // Call the REST Web Service
-        $response = $pushwoosh->createMessage($request);
+        /** @var PushwooshManager $pushwooshManager */
+        $pushwooshManager = $this->getContainer()->get('prezent_pushwoosh.pushwoosh_manager');
+        $success = $pushwooshManager->send($input->getArgument('message'), [], $input->getOption('tokens'));
 
         // Check if its ok
-        if ($response->isOk()) {
-            $output->writeln('<info>Message send successful</info>');
+        if ($success) {
+            $output->writeln('<info>Push message send successful</info>');
         } else {
-            $output->writeln('<error>Message could not be send</error>');
+            $output->writeln('<error>Push message could not be send</error>');
             $output->writeln(
                 sprintf(
                     '<error>[%d] %s</error>',
-                    $response->getStatusCode(),
-                    $response->getStatusMessage()
+                    $pushwooshManager->getErrorCode(),
+                    $pushwooshManager->getErrorMessage()
                 )
             );
         }
 
         return 0;
-    }
-
-    /**
-     * Create the request to send the push
-     *
-     * @param string $content
-     * @param array $devices
-     * @return CreateMessageRequest
-     */
-    private function createRequest($content, array $devices = [])
-    {
-        $notification = new Notification();
-        $notification->setContent($content);
-
-        if (!empty($devices)) {
-            $notification->setDevices($devices);
-        }
-
-        $request = new CreateMessageRequest();
-        $request->addNotification($notification);
-
-        return $request;
     }
 }
