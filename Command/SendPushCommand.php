@@ -26,6 +26,13 @@ class SendPushCommand extends ContainerAwareCommand
             ->setDescription('Send a push message manually')
             ->addArgument('message', InputArgument::REQUIRED, 'The message to send')
             ->addOption(
+                'custom-data',
+                'd',
+                InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
+                'List of custom data items to be send with the request. Format `key`:`value`',
+                []
+            )
+            ->addOption(
                 'tokens',
                 't',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
@@ -43,7 +50,13 @@ class SendPushCommand extends ContainerAwareCommand
     {
         /** @var PushwooshManager $pushwooshManager */
         $pushwooshManager = $this->getContainer()->get('prezent_pushwoosh.pushwoosh_manager');
-        $success = $pushwooshManager->send($input->getArgument('message'), [], $input->getOption('tokens'));
+
+        $customData = [];
+        if ($data = $input->getOption('custom-data')) {
+            $customData = $this->formatCustomData($data);
+        }
+
+        $success = $pushwooshManager->send($input->getArgument('message'), $customData, $input->getOption('tokens'));
 
         // Check if its ok
         if ($success) {
@@ -60,5 +73,28 @@ class SendPushCommand extends ContainerAwareCommand
         }
 
         return 0;
+    }
+
+    /**
+     * Format the custom data into an associative array
+     *
+     * @param array $data
+     * @return array
+     */
+    private function formatCustomData(array $data)
+    {
+        $customData = [];
+        foreach ($data as $dataItem) {
+            // check for the integrity of the data
+            if (!strstr($dataItem, ':')) {
+                throw new \InvalidArgumentException('Custom data items must be entered in the format `key`:`value`');
+            }
+
+            // and parse the data
+            list($key, $value) = explode(':', $dataItem);
+            $customData[$key] = $value;
+        }
+
+        return $customData;
     }
 }
