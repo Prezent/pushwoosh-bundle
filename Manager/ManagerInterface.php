@@ -15,7 +15,8 @@ interface ManagerInterface
      * @param string $content
      * @param array $data
      * @param array $devices
+     * @param mixed $badge
      * @return bool
      */
-    public function send($content, array $data = [], array $devices = []);
+    public function send($content, array $data = [], array $devices = [], $badge = false);
 }

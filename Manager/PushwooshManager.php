@@ -3,6 +3,7 @@
 namespace Prezent\PushwooshBundle\Manager;
 
 use Gomoob\Pushwoosh\IPushwoosh;
+use Gomoob\Pushwoosh\Model\Notification\IOS;
 use Gomoob\Pushwoosh\Model\Notification\Notification;
 use Gomoob\Pushwoosh\Model\Request\CreateMessageRequest;
 
@@ -41,15 +42,15 @@ class PushwooshManager implements ManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function send($content, array $data = [], array $devices = [])
+    public function send($content, array $data = [], array $devices = [], $badge = false)
     {
-        $request = $this->createRequest($content, $data, $devices);
+        $request = $this->createRequest($content, $data, $devices, $badge);
 
         // Call the REST Web Service
         $response = $this->client->createMessage($request);
 
         // Check if its ok
-        if ($response->isOk()) {
+        if($response->isOk()) {
             return true;
         } else {
             $this->errorMessage = $response->getStatusMessage();
@@ -62,11 +63,13 @@ class PushwooshManager implements ManagerInterface
      * Create the request to send the push
      *
      * @param string $content
-     * @param array $data
-     * @param array $devices
+     * @param array  $data
+     * @param array  $devices
+     * @param mixed  $badge
+     *
      * @return CreateMessageRequest
      */
-    private function createRequest($content, array $data = [], array $devices = [])
+    private function createRequest($content, array $data = [], array $devices = [], $badge = false)
     {
         $notification = new Notification();
         $notification->setContent($content);
@@ -77,6 +80,12 @@ class PushwooshManager implements ManagerInterface
 
         if (!empty($devices)) {
             $notification->setDevices($devices);
+        }
+
+        if ($badge) {
+            $ios = new IOS();
+            $ios->setBadges($badge);
+            $notification->setIOS($ios);
         }
 
         $request = new CreateMessageRequest();
