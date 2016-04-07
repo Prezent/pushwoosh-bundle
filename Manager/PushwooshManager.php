@@ -65,7 +65,7 @@ class PushwooshManager implements ManagerInterface
      * @param string $content
      * @param array  $data
      * @param array  $devices
-     * @param $badge
+     * @param mixed  $badge
      *
      * @return CreateMessageRequest
      */
