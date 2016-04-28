@@ -5,6 +5,7 @@ namespace Prezent\PushwooshBundle\Manager;
 use Gomoob\Pushwoosh\IPushwoosh;
 use Gomoob\Pushwoosh\Model\Notification\Notification;
 use Gomoob\Pushwoosh\Model\Request\CreateMessageRequest;
+use Psr\Log\LoggerInterface;
 
 /**
  * Prezent\SherpaTeamBundle\PushNotification\Manager
@@ -29,13 +30,25 @@ class PushwooshManager implements ManagerInterface
     private $errorCode;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var bool
+     */
+    private $logRequests = false;
+
+    /**
      * Constructor
      *
      * @param IPushwoosh $client
+     * @param LoggerInterface $logger
      */
-    public function __construct(IPushwoosh $client)
+    public function __construct(IPushwoosh $client, LoggerInterface $logger)
     {
         $this->client = $client;
+        $this->logger = $logger;
     }
 
     /**
@@ -50,10 +63,24 @@ class PushwooshManager implements ManagerInterface
 
         // Check if its ok
         if ($response->isOk()) {
+            if ($this->logRequests) {
+                $this->logger->info(
+                    'Pushmessage sent',
+                    ['content' => $content, 'tokens' => $devices, 'data' => $data]
+                );
+            }
+
             return true;
         } else {
+            if ($this->logRequests) {
+                $this->logger->error(
+                    'Could not sent pushmessage',
+                    ['message' => $response->getStatusMessage(), 'code' => $response->getStatusCode()]
+                );
+            }
             $this->errorMessage = $response->getStatusMessage();
             $this->errorCode = $response->getStatusCode();
+
             return false;
         }
     }
@@ -103,5 +130,17 @@ class PushwooshManager implements ManagerInterface
     public function getErrorCode()
     {
         return $this->errorCode;
+    }
+
+    /**
+     * Setter for logRequests
+     *
+     * @param boolean $logRequests
+     * @return self
+     */
+    public function setLogRequests($logRequests)
+    {
+        $this->logRequests = $logRequests;
+        return $this;
     }
 }
