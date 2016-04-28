@@ -52,48 +52,47 @@ class PushwooshManager implements ManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function send($content, array $data = [], array $devices = [])
     {
-        $request = $this->createRequest($content, $data, $devices);
+        $notification = $this->createNotification($content, $data, $devices);
 
-        // Call the REST Web Service
-        $response = $this->client->createMessage($request);
+        $request = new CreateMessageRequest();
+        $request->addNotification($notification);
 
-        // Check if its ok
-        if ($response->isOk()) {
-            if ($this->logRequests) {
-                $this->logger->info(
-                    'Pushmessage sent',
-                    ['content' => $content, 'tokens' => $devices, 'data' => $data]
-                );
-            }
-
-            return true;
-        } else {
-            if ($this->logRequests) {
-                $this->logger->error(
-                    'Could not sent pushmessage',
-                    ['message' => $response->getStatusMessage(), 'code' => $response->getStatusCode()]
-                );
-            }
-            $this->errorMessage = $response->getStatusMessage();
-            $this->errorCode = $response->getStatusCode();
-
-            return false;
-        }
+        return $this->sendPush($request);
     }
 
     /**
-     * Create the request to send the push
+     * {@inheritdoc}
+     */
+    public function sendBatch(array $notifications)
+    {
+        $request = new CreateMessageRequest();
+        foreach ($notifications as $notificationArray) {
+            $content = isset($notificationArray['content']) ? $notificationArray['content'] : '';
+            $data = isset($notificationArray['data']) ? $notificationArray['data'] : [];
+            $devices = isset($notificationArray['devices']) ? $notificationArray['devices'] : [];
+
+            if ($content) {
+                $notification = $this->createNotification($content, $data, $devices);
+                $request->addNotification($notification);
+            }
+        }
+
+        return $this->sendPush($request);
+    }
+
+    /**
+     * Create a notification for the request
      *
      * @param string $content
      * @param array $data
      * @param array $devices
-     * @return CreateMessageRequest
+     * @return Notification
      */
-    private function createRequest($content, array $data = [], array $devices = [])
+    private function createNotification($content, array $data = [], array $devices = [])
     {
         $notification = new Notification();
         $notification->setContent($content);
@@ -106,10 +105,45 @@ class PushwooshManager implements ManagerInterface
             $notification->setDevices($devices);
         }
 
-        $request = new CreateMessageRequest();
-        $request->addNotification($notification);
+        return $notification;
+    }
 
-        return $request;
+    /**
+     * Send the push message with client
+     *
+     * @param CreateMessageRequest $request
+     * @return boolean
+     */
+    private function sendPush(CreateMessageRequest $request)
+    {
+        // Call the REST Web Service
+        $response = $this->client->createMessage($request);
+
+        // Check if its ok
+        if ($response->isOk()) {
+
+            if ($this->logRequests) {
+                // log all individual messages
+                foreach ($request->getNotifications() as $notification) {
+                    $this->logger->info('Pushmessage sent', $notification->jsonSerialize());
+                }
+            }
+
+            return true;
+        } else {
+
+            if ($this->logRequests) {
+                $this->logger->error(
+                    'Error sending pushmessage',
+                    ['message' => $response->getStatusMessage(), 'code' => $response->getStatusCode()]
+                );
+            }
+
+            $this->errorMessage = $response->getStatusMessage();
+            $this->errorCode = $response->getStatusCode();
+
+            return false;
+        }
     }
 
     /**

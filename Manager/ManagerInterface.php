@@ -18,4 +18,16 @@ interface ManagerInterface
      * @return bool
      */
     public function send($content, array $data = [], array $devices = []);
+
+    /**
+     * Send a batch of push notifications in one go
+     *
+     * @param array $notifications [
+     *      'content' => string,
+     *      'data' => [],
+     *      'devices' => [],
+     * ]
+     * @return bool
+     */
+    public function sendBatch(array $notifications);
 }
