@@ -21,7 +21,7 @@ public function registerBundles()
 ```
 
 ## Configuration
-In the configuration file, you have to set the API key and either the application ID, or the application group ID. Optionally, you can set the client class that will be instantiated:
+In the configuration file, you have to set the API key and either the application ID, or the application group ID. Optionally, you can set the client class that will be instantiated, and whether or not all requests will be logged:
 
 ```yml
 prezent_pushwoosh:
@@ -29,4 +29,5 @@ prezent_pushwoosh:
   application_group_id: YYYYY-YYYYY
   api_key: xxxxxxxxxxxxxxxxxxxxx
   client_class: Gomoob\Pushwoosh\Client\Pushwoosh
+  log_requests: false
 ```

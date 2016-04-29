@@ -27,6 +27,37 @@ public function sendPushMessage()
 }
 ```
 
+You can also send a batch of push notifications in one request:
+```php
+public function sendPushMessageBatch()
+{
+    $pushwooshManager = $this->getContainer()->get('prezent_pushwoosh.pushwoosh_manager');
+    $success = $pushwooshManager->sendBatch(
+        [
+            [
+                'content' => 'Hello Jean!',
+                'data' => [],
+                'devices' => []
+            ],
+            [
+                'content' => 'Hello Rene!',
+                'data' => [],
+                'devices' => []
+            ],
+        ]
+    );
+
+    // Check if its ok
+    if ($success) {
+        print 'Great, my messages have been sent !';
+    } else {
+        print 'Oups, the sent failed :-(';
+        print 'Status code : ' . $pushwooshManager->getErrorCode();
+        print 'Status message : ' . $pushwooshManager->getErrorMessage();
+    }
+}
+```
+
 ## Using the Pushwoosh client directly
 The bundle also creates a service for the actual Pushwoosh client, that you can get from the Service Container. 
 Using this client, you get more flexibility in sending push messages. You can use the Pushwoosh client 
