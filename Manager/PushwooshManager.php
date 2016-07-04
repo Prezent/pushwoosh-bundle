@@ -3,6 +3,7 @@
 namespace Prezent\PushwooshBundle\Manager;
 
 use Gomoob\Pushwoosh\IPushwoosh;
+use Gomoob\Pushwoosh\Model\Condition\IntCondition;
 use Gomoob\Pushwoosh\Model\Notification\IOS;
 use Gomoob\Pushwoosh\Model\Notification\Notification;
 use Gomoob\Pushwoosh\Model\Request\CreateMessageRequest;
