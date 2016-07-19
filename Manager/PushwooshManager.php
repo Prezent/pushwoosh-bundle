@@ -77,7 +77,7 @@ class PushwooshManager implements ManagerInterface
         $notification->setContent($content);
 
         if ($condition) {
-            $notification->setConditions(IntCondition::create($condition)->eq(1));
+            $notification->setConditions(array(IntCondition::create($condition)->eq(1)));
         }
 
         if (!empty($data)) {
