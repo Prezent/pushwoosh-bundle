@@ -43,9 +43,9 @@ class PushwooshManager implements ManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function send($content, array $data = [], array $devices = [], $badge = false, $condition = null)
+    public function send($content, array $data = [], array $devices = [], $badge = false, $condition = null, $sound = true)
     {
-        $request = $this->createRequest($content, $data, $devices, $badge, $condition);
+        $request = $this->createRequest($content, $data, $devices, $badge, $condition, $sound);
 
         // Call the REST Web Service
         $response = $this->client->createMessage($request);
@@ -71,7 +71,7 @@ class PushwooshManager implements ManagerInterface
      *
      * @return CreateMessageRequest
      */
-    private function createRequest($content, array $data = [], array $devices = [], $badge = false, $condition = null)
+    private function createRequest($content, array $data = [], array $devices = [], $badge = false, $condition = null, $sound = true)
     {
         $notification = new Notification();
         $notification->setContent($content);
@@ -88,11 +88,14 @@ class PushwooshManager implements ManagerInterface
             $notification->setDevices($devices);
         }
 
+        $ios = new IOS();
         if ($badge) {
-            $ios = new IOS();
             $ios->setBadges($badge);
-            $notification->setIOS($ios);
         }
+        if (!$sound) {
+            $ios->setSound('');
+        }
+        $notification->setIOS($ios);
 
         $request = new CreateMessageRequest();
         $request->addNotification($notification);
