@@ -43,9 +43,9 @@ class PushwooshManager implements ManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function send($content, array $data = [], array $devices = [], $badge = false, $condition = null, $sound = true)
+    public function send($content, array $data = [], array $devices = [], $badge = false, $category = null, $condition = null, $sound = true)
     {
-        $request = $this->createRequest($content, $data, $devices, $badge, $condition, $sound);
+        $request = $this->createRequest($content, $data, $devices, $badge, $category, $condition, $sound);
 
         // Call the REST Web Service
         $response = $this->client->createMessage($request);
@@ -67,11 +67,12 @@ class PushwooshManager implements ManagerInterface
      * @param array  $data
      * @param array  $devices
      * @param bool|integer|string $badge
+     * @param string $category
      * @param string $condition
      *
      * @return CreateMessageRequest
      */
-    private function createRequest($content, array $data = [], array $devices = [], $badge = false, $condition = null, $sound = true)
+    private function createRequest($content, array $data = [], array $devices = [], $badge = false, $category = null, $condition = null, $sound = true)
     {
         $notification = new Notification();
         $notification->setContent($content);
@@ -88,6 +89,7 @@ class PushwooshManager implements ManagerInterface
             $notification->setDevices($devices);
         }
 
+
         $ios = new IOS();
         if ($badge) {
             $ios->setBadges($badge);
@@ -95,6 +97,18 @@ class PushwooshManager implements ManagerInterface
         if (!$sound) {
             $ios->setSound('');
         }
+        if ($category) {
+            $ios->setRootParams(
+                array(
+                    'aps' => array(
+                        'content-available' => 1,
+                        'mutable-content'   => 1,
+                        'category'          => $category
+                    )
+                )
+            );
+        }
+
         $notification->setIOS($ios);
 
         $request = new CreateMessageRequest();

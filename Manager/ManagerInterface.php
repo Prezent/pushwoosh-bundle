@@ -10,13 +10,15 @@ namespace Prezent\PushwooshBundle\Manager;
 interface ManagerInterface
 {
     /**
-     * Send a push notification
-     *
-     * @param string $content
+     * @param       $content
      * @param array $data
      * @param array $devices
-     * @param mixed $badge
-     * @return bool
+     * @param bool  $badge
+     * @param null  $category
+     * @param null  $condition
+     * @param bool  $sound
+     *
+     * @return mixed
      */
-    public function send($content, array $data = [], array $devices = [], $badge = false);
+    public function send($content, array $data = [], array $devices = [], $badge = false, $category = null, $condition = null, $sound = true);
 }
