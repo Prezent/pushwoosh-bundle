@@ -45,8 +45,8 @@ class PrezentPushwooshExtension extends Extension
         if (isset($config['client_class'])) {
             $container->setParameter('prezent_pushwoosh.pushwoosh_client_class', $config['client_class']);
         }
-        if (isset($config['log_requests'])) {
-            $container->setParameter('prezent_pushwoosh.log_requests', $config['log_requests']);
+        if (isset($config['logging'])) {
+            $container->setParameter('prezent_pushwoosh.logging', $config['logging']);
         }
     }
 }

@@ -41,7 +41,7 @@ class PrezentPushwooshExtensionTest extends \PHPUnit_Framework_TestCase
         $applicationGroupId = 'YYY-YYYY';
         $apiKey = 'xxxxxxxxxxxxxx';
         $clientClass = 'Gomoob\Pushwoosh\Client\PushwooshMock';
-        $logRequests = true;
+        $logRequests = 'log';
 
         $this->extension->load(
             [
@@ -50,7 +50,7 @@ class PrezentPushwooshExtensionTest extends \PHPUnit_Framework_TestCase
                     'application_group_id' => $applicationGroupId,
                     'api_key' => $apiKey,
                     'client_class' => 'Gomoob\Pushwoosh\Client\PushwooshMock',
-                    'log_requests' => true,
+                    'logging' => 'log',
                 ]
             ],
             $this->container
@@ -59,7 +59,7 @@ class PrezentPushwooshExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($applicationId, $this->container->getParameter('prezent_pushwoosh.application_id'));
         $this->assertEquals($applicationGroupId, $this->container->getParameter('prezent_pushwoosh.application_group_id'));
         $this->assertEquals($apiKey, $this->container->getParameter('prezent_pushwoosh.api_key'));
-        $this->assertEquals($logRequests, $this->container->getParameter('prezent_pushwoosh.log_requests'));
+        $this->assertEquals($logRequests, $this->container->getParameter('prezent_pushwoosh.logging'));
 
         $client = $this->container->get('pushwoosh');
         $this->assertEquals($clientClass, get_class($client));

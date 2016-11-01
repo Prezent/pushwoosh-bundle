@@ -5,6 +5,7 @@ namespace Prezent\PushwooshBundle\Manager;
 use Gomoob\Pushwoosh\IPushwoosh;
 use Gomoob\Pushwoosh\Model\Notification\Notification;
 use Gomoob\Pushwoosh\Model\Request\CreateMessageRequest;
+use Prezent\PushwooshBundle\Log\LoggingTrait;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -14,6 +15,8 @@ use Psr\Log\LoggerInterface;
  */
 class PushwooshManager implements ManagerInterface
 {
+    use LoggingTrait;
+
     /**
      * @var IPushwoosh
      */
@@ -35,7 +38,7 @@ class PushwooshManager implements ManagerInterface
     private $logger;
 
     /**
-     * @var bool
+     * @var string
      */
     private $logRequests = false;
 
@@ -121,18 +124,16 @@ class PushwooshManager implements ManagerInterface
 
         // Check if its ok
         if ($response->isOk()) {
-
             if ($this->logRequests) {
                 // log all individual messages
                 foreach ($request->getNotifications() as $notification) {
-                    $this->logger->info('Pushmessage sent', $notification->jsonSerialize());
+                    $this->log($notification, true);
                 }
             }
-
             return true;
         } else {
-
             if ($this->logRequests) {
+                $this->log($notification, false, );
                 $this->logger->error(
                     'Error sending pushmessage',
                     ['message' => $response->getStatusMessage(), 'code' => $response->getStatusCode()]
@@ -146,6 +147,27 @@ class PushwooshManager implements ManagerInterface
         }
     }
 
+    /**
+     * Log the notification
+     *
+     * @param Notification $notification
+     * @param bool $success
+     * @return bool
+     */
+    protected function log(Notification $notification, $success = true, array $context = [])
+    {
+        switch ($this->logRequests) {
+            case 'true':
+            case 'log':
+                $this->logToFile($this->logger, $notification, $success);
+                break;
+            default:
+                break;
+        }
+
+        return true;
+    }
+    
     /**
      * Getter for errorMessage
      *

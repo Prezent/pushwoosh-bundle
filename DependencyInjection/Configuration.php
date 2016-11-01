@@ -29,7 +29,7 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('application_id')->end()
             ->scalarNode('application_group_id')->end()
             ->scalarNode('client_class')->end()
-            ->booleanNode('log_requests')->defaultFalse()
+            ->scalarNode('logging')->defaultValue('')->end()
         ;
 
         return $treeBuilder;
