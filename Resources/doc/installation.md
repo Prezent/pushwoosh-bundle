@@ -29,7 +29,7 @@ prezent_pushwoosh:
   application_group_id: YYYYY-YYYYY
   api_key: xxxxxxxxxxxxxxxxxxxxx
   client_class: Gomoob\Pushwoosh\Client\Pushwoosh
-  logging: log
+  log_requests: log
 ```
 
 ## Logging

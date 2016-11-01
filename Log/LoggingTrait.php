@@ -32,11 +32,10 @@ trait LoggingTrait
         $data = array_merge($data, $context);
 
         if ($success) {
-                $logger->info('Pushmessage sent', $data);
-            } else {
-                $logger->error('Error sending pushmessage', $data);
+            $logger->info('Pushmessage sent', $data);
+        } else {
+            $logger->error('Error sending pushmessage', $data);
 
-            }
         }
 
         return true;

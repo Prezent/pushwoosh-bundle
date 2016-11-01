@@ -133,11 +133,13 @@ class PushwooshManager implements ManagerInterface
             return true;
         } else {
             if ($this->logRequests) {
-                $this->log($notification, false, );
-                $this->logger->error(
-                    'Error sending pushmessage',
-                    ['message' => $response->getStatusMessage(), 'code' => $response->getStatusCode()]
-                );
+                foreach ($request->getNotifications() as $notification) {
+                    $this->log(
+                        $notification,
+                        false,
+                        ['message' => $response->getStatusMessage(), 'code' => $response->getStatusCode()]
+                    );
+                }
             }
 
             $this->errorMessage = $response->getStatusMessage();
@@ -152,6 +154,7 @@ class PushwooshManager implements ManagerInterface
      *
      * @param Notification $notification
      * @param bool $success
+     * @param array $context
      * @return bool
      */
     protected function log(Notification $notification, $success = true, array $context = [])
@@ -159,7 +162,7 @@ class PushwooshManager implements ManagerInterface
         switch ($this->logRequests) {
             case 'true':
             case 'log':
-                $this->logToFile($this->logger, $notification, $success);
+                $this->logToFile($this->logger, $notification, $success, $context);
                 break;
             default:
                 break;
