@@ -19,6 +19,7 @@ trait LoggingTrait
      * @param LoggerInterface $logger
      * @param Notification $notification
      * @param bool $success
+     * @param array $context
      * @return bool
      */
     public function logToFile(LoggerInterface $logger, Notification $notification, $success = true, array $context = [])
