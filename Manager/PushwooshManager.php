@@ -5,6 +5,7 @@ namespace Prezent\PushwooshBundle\Manager;
 use Gomoob\Pushwoosh\IPushwoosh;
 use Gomoob\Pushwoosh\Model\Notification\Notification;
 use Gomoob\Pushwoosh\Model\Request\CreateMessageRequest;
+use Prezent\PushwooshBundle\Exception\LoggingException;
 use Prezent\PushwooshBundle\Log\LoggingTrait;
 use Psr\Log\LoggerInterface;
 
@@ -40,18 +41,18 @@ class PushwooshManager implements ManagerInterface
     /**
      * @var string
      */
-    private $logRequests = false;
+    private $logging = null;
 
     /**
      * Constructor
      *
      * @param IPushwoosh $client
-     * @param LoggerInterface $logger
+     * @param string $logging
      */
-    public function __construct(IPushwoosh $client, LoggerInterface $logger)
+    public function __construct(IPushwoosh $client, $logging = null)
     {
         $this->client = $client;
-        $this->logger = $logger;
+        $this->logging = $logging;
     }
 
     /**
@@ -124,7 +125,7 @@ class PushwooshManager implements ManagerInterface
 
         // Check if its ok
         if ($response->isOk()) {
-            if ($this->logRequests) {
+            if ($this->logging) {
                 // log all individual messages
                 foreach ($request->getNotifications() as $notification) {
                     $this->log($notification, true);
@@ -132,7 +133,7 @@ class PushwooshManager implements ManagerInterface
             }
             return true;
         } else {
-            if ($this->logRequests) {
+            if ($this->logging) {
                 foreach ($request->getNotifications() as $notification) {
                     $this->log(
                         $notification,
@@ -156,12 +157,16 @@ class PushwooshManager implements ManagerInterface
      * @param bool $success
      * @param array $context
      * @return bool
+     * @throws LoggingException
      */
     protected function log(Notification $notification, $success = true, array $context = [])
     {
-        switch ($this->logRequests) {
-            case 'true':
-            case 'log':
+        switch ($this->logging) {
+            case 'file':
+                if (null === $this->logger) {
+                    throw new LoggingException('No logger is set, cannot write to file');
+                }
+
                 $this->logToFile($this->logger, $notification, $success, $context);
                 break;
             default:
@@ -192,14 +197,24 @@ class PushwooshManager implements ManagerInterface
     }
 
     /**
-     * Setter for logRequests
+     * Getter for logger
      *
-     * @param boolean $logRequests
+     * @return LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
+     * Setter for logger
+     *
+     * @param LoggerInterface $logger
      * @return self
      */
-    public function setLogRequests($logRequests)
+    public function setLogger($logger)
     {
-        $this->logRequests = $logRequests;
+        $this->logger = $logger;
         return $this;
     }
 }

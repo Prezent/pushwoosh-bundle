@@ -9,7 +9,7 @@
         <parameter key="prezent_pushwoosh.application_group_id">null</parameter>
         <parameter key="prezent_pushwoosh.api_key">null</parameter>
         <parameter key="prezent_pushwoosh.pushwoosh_client_class">Gomoob\Pushwoosh\Client\Pushwoosh</parameter>
-        <parameter key="prezent_pushwoosh.log_requests">false</parameter>
+        <parameter key="prezent_pushwoosh.logging">null</parameter>
     </parameters>
 
      <services>
@@ -28,11 +28,7 @@
 
         <service id="prezent_pushwoosh.pushwoosh_manager" class="Prezent\PushwooshBundle\Manager\PushwooshManager">
             <argument type="service" id="pushwoosh"/>
-            <argument type="service" id="logger" />
-            <call method="setLogRequests">
-                <argument>%prezent_pushwoosh.log_requests%</argument>
-            </call>
-            <tag name="monolog.logger" channel="prezent_pushwoosh" />
+            <argument>%prezent_pushwoosh.logging%</argument>
         </service>
 
     </services>

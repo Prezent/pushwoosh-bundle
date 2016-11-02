@@ -23,13 +23,17 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-            ->scalarNode('api_key')
-                ->isRequired()
+                ->scalarNode('api_key')->isRequired()->end()
+                ->scalarNode('application_id')->end()
+                ->scalarNode('application_group_id')->end()
+                ->scalarNode('client_class')->end()
+                ->arrayNode('logging')
+                    ->canBeEnabled()
+                    ->children()
+                        ->scalarNode('target')->defaultValue('file')->end()
+                    ->end()
+                ->end()
             ->end()
-            ->scalarNode('application_id')->end()
-            ->scalarNode('application_group_id')->end()
-            ->scalarNode('client_class')->end()
-            ->scalarNode('log_requests')->defaultValue('false')->end()
         ;
 
         return $treeBuilder;

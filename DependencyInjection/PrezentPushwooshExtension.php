@@ -5,6 +5,7 @@ namespace Prezent\PushwooshBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
@@ -45,8 +46,20 @@ class PrezentPushwooshExtension extends Extension
         if (isset($config['client_class'])) {
             $container->setParameter('prezent_pushwoosh.pushwoosh_client_class', $config['client_class']);
         }
-        if (isset($config['log_requests'])) {
-            $container->setParameter('prezent_pushwoosh.log_requests', $config['log_requests']);
+
+        if ($config['logging']['enabled']) {
+            $container->setParameter('prezent_pushwoosh.logging', $config['logging']['target']);
+
+            switch ($config['logging']['target']) {
+                case 'file':
+                    // if we are logging to file, add monolog to the manager, and create a specific channel
+                    $definition = $container->getDefinition('prezent_pushwoosh.pushwoosh_manager');
+                    $definition->addMethodCall('setLogger', [new Reference('logger')]);
+                    $definition->addTag('monolog.logger', ['channel' => 'prezent_pushwoosh']);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
