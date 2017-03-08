@@ -15,7 +15,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-        new Prezent\PushwooshBundle\PushwooshBundle(),
+        new Prezent\PushwooshBundle\PrezentPushwooshBundle(),
     );
 }
 ```
